@@ -249,11 +249,7 @@
             '佐', '賀', '長', '崎', '熊', '本', '大', '分', '宮', '崎', '鹿', '沖', '縄', '皇', '國', '學', '多', '摩'
         ];
 
-        // 実在・有名大学の特別プリセット（たまに出現すると面白い）
-        const specialUniversities = [
-            '東京', '京都', '早稲田', '慶應義塾', '明治', '青山学院', '立教', '中央', '法政', 
-            '筑波', '一橋', '大阪', '神戸', '九州', '北海道', '東北', '名古屋', '同志社', '立命館'
-        ];
+
 
         // ランクの定義
         const ranks = {
@@ -383,25 +379,18 @@
 
         // ランダムな漢字文字列を生成する
         function generateRandomKanji(len) {
-            if (Math.random() < 0.08) {
-                const candidates = specialUniversities.filter(u => len === 'random' || u.length === len);
-                if (candidates.length > 0) {
-                    return candidates[Math.floor(Math.random() * candidates.length)];
-                }
-            }
+    let length = len;
+    if (len === 'random') {
+        length = Math.floor(Math.random() * 4) + 2; // 2〜5文字
+    }
 
-            let length = len;
-            if (len === 'random') {
-                length = Math.floor(Math.random() * 4) + 2; // 2〜5文字
-            }
-
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * kanjiPool.length);
-                result += kanjiPool[randomIndex];
-            }
-            return result;
-        }
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * kanjiPool.length);
+        result += kanjiPool[randomIndex];
+    }
+    return result;
+}
 
         // ガチャを回す
         function rollGacha() {
