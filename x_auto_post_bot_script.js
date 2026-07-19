@@ -5,9 +5,26 @@ require('dotenv').config();
 
 const COOKIE_PATH = path.resolve(__dirname, 'cookies.json');
 
+// ==========================================
+// 【追加】環境変数からクッキーファイルを復元
+// ==========================================
+const cookieData = process.env.COOKIE_JSON;
+if (cookieData) {
+    try {
+        fs.writeFileSync(COOKIE_PATH, cookieData, 'utf8');
+        console.log('📝 環境変数から cookies.json を復元しました。');
+    } catch (err) {
+        console.error('❌ クッキーファイルの復元に失敗しました:', err);
+    }
+} else {
+    console.log('ℹ️ 環境変数 COOKIE_JSON が設定されていません。ローカルのファイルを使用します。');
+}
+// ==========================================
+
 async function runBot() {
     console.log('🤖 自動格付けbotを起動しています...');
-    const browser = await chromium.launch({ headless: false });
+    // 💡 サーバー（GitHub Actionsなど）で動かす場合は headless: true にする必要があります
+    const browser = await chromium.launch({ headless: true }); 
     const context = await browser.newContext({
         locale: 'ja-JP',
         timezoneId: 'Asia/Tokyo',
@@ -57,14 +74,8 @@ async function runBot() {
         try {
             await page.waitForSelector(editorSelector, { timeout: 15000 });
         } catch (e) {
-            console.log('⚠️ ログインが必要です。手動でログインしてください。');
-            // ログイン完了を待つ（手動操作）
-            await page.waitForURL('**/home', { timeout: 60000 });
-            
-            // ログイン成功したらクッキーを保存
-            const cookies = await context.cookies();
-            fs.writeFileSync(COOKIE_PATH, JSON.stringify(cookies));
-            console.log('💾 クッキーを保存しました。');
+            console.log('⚠️ ログインが必要です。サーバー環境では手動ログインができないため、クッキーが無効になっている可能性があります。');
+            throw new Error('ログイン状態の維持に失敗しました。クッキーを更新してください。');
         }
 
         await page.click(editorSelector);
@@ -84,7 +95,6 @@ async function runBot() {
 // ----------------------------------------------------
 // 定期実行（Cron動作）の設定
 // ----------------------------------------------------
-// 例：3時間ごとに自動実行する場合（1000ms * 60s * 60m * 3h）
 const INTERVAL_MS = 1000 * 60 * 60 * 3; 
 
 // 初回実行
