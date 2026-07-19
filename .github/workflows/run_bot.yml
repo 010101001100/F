@@ -1,11 +1,8 @@
 name: X Auto Post Bot
 
 on:
-  # 1. 3時間ごとに自動で実行する設定 (UTC時間を基準にするため、日本時間の15:00, 18:00...等になります)
   schedule:
     - cron: '0 */3 * * *'
-  
-  # 2. GitHubの画面から「今すぐ実行ボタン」を手動で押せるようにする設定
   workflow_dispatch:
 
 jobs:
@@ -13,27 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # GitHub上のコードをサーバーに持ってくる
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Node.jsの環境をセットアップする
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
-        cache: 'npm'
+        node-version: '24' # 💡 警告が出ないように24に変更しました
 
-    # package.jsonを元に必要なセット（Playwrightなど）をインストール
     - name: Install dependencies
-      run: npm install
+      run: npm install # 💡 エラーの原因だった npm ci から npm install に変更しました
 
-    # Playwright（ブラウザ自動操作）が動くようにChromiumブラウザをインストール
     - name: Install Playwright Browsers
       run: npx playwright install chromium --with-deps
 
-    # 登録したクッキー（Secrets）を安全に読み込んで、botを実行する
     - name: Run bot script
       env:
-        COOKIE_JSON: ${{ secrets.COOKIE_JSON }}
+        COOKIE_JSON_DATA: ${{ secrets.COOKIE_JSON }}
       run: node x_auto_post_bot_script.js
