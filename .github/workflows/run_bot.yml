@@ -16,15 +16,16 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '24' # 💡 警告が出ないように24に変更しました
+        node-version: '22' # 警告を消すために確実に固定
 
     - name: Install dependencies
-      run: npm install # 💡 エラーの原因だった npm ci から npm install に変更しました
+      run: npm install
 
-    - name: Install Playwright Browsers
-      run: npx playwright install chromium --with-deps
+    # Linux環境に必要なすべての依存パッケージを含めてPlaywrightブラウザを強制インストール
+    - name: Install Playwright Browsers & Deps
+      run: npx playwright install --with-deps chromium
 
     - name: Run bot script
       env:
-        COOKIE_JSON_DATA: ${{ secrets.COOKIE_JSON }}
+        COOKIE_JSON: ${{ secrets.COOKIE_JSON }}
       run: node x_auto_post_bot_script.js
