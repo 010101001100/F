@@ -1,0 +1,13 @@
+{
+  "name": "x-auto-post-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "x_auto_post_bot_script.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "playwright": "^1.49.0"
+  },
+  "scripts": {
+    "start": "node x_auto_post_bot_script.js"
+  }
+}
