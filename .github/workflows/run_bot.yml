@@ -27,5 +27,5 @@ jobs:
 
     - name: Run bot script
       env:
-        COOKIE_JSON: ${{ secrets.COOKIES_JSON }}
+        COOKIES_JSON: ${{ secrets.COOKIES_JSON }}
       run: node x_auto_post_bot_script.js
