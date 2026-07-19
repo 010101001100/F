@@ -31,20 +31,31 @@ async function runBot() {
         viewport: { width: 1280, height: 800 }
     });
 
-    // クッキーがあれば読み込む
+   // クッキーがあれば読み込む
     if (fs.existsSync(COOKIE_PATH)) {
         let cookies = JSON.parse(fs.readFileSync(COOKIE_PATH, 'utf-8'));
-        // Playwrightの制限に合わせてSameSite属性を修正
+        
+        // Playwrightの制限・エラーを回避するためにクッキーを最適化
         cookies = cookies.map(cookie => {
+            // 1. SameSite属性の調整
             if (cookie.sameSite === 'no_restriction') {
                 cookie.sameSite = 'None';
             } else if (cookie.sameSite !== 'Strict' && cookie.sameSite !== 'Lax' && cookie.sameSite !== 'None') {
                 delete cookie.sameSite;
             }
+            
+            // 2. Playwrightでエラー原因になる不要な空属性を削除
+            if (cookie.storeId === null) delete cookie.storeId;
+            
+            // 3. 拡張機能特有の不要なプロパティがあれば削除
+            delete cookie.hostOnly;
+            delete cookie.session;
+            
             return cookie;
         });
+        
         await context.addCookies(cookies);
-        console.log('🍪 保存されたクッキーを読み込みました。');
+        console.log('🍪 保存されたクッキーを最適化して読み込みました。');
     }
 
     const page = await context.newPage();
