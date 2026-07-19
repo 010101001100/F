@@ -8,7 +8,7 @@ const COOKIE_PATH = path.resolve(__dirname, 'cookies.json');
 // ==========================================
 // 【追加】環境変数からクッキーファイルを復元
 // ==========================================
-const cookieData = process.env.COOKIE_JSON;
+const cookieData = process.env.COOKIES_JSON;
 if (cookieData) {
     try {
         fs.writeFileSync(COOKIE_PATH, cookieData, 'utf8');
@@ -17,7 +17,7 @@ if (cookieData) {
         console.error('❌ クッキーファイルの復元に失敗しました:', err);
     }
 } else {
-    console.log('ℹ️ 環境変数 COOKIE_JSON が設定されていません。ローカルのファイルを使用します。');
+    console.log('ℹ️ 環境変数 COOKIES_JSON が設定されていません。ローカルのファイルを使用します。');
 }
 // ==========================================
 
